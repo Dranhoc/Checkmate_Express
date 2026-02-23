@@ -1,15 +1,18 @@
 import z from 'zod';
 
 export const createTournamentValidator = z.object({
+	id: z.number().optional(),
 	name: z.string().min(2).max(255),
 	location: z.string().optional(),
-	playerMin: z.number().min(2),
-	playerMax: z.number().max(32),
-	eloMin: z.number().min(0).optional(),
-	eloMax: z.number().max(3000).optional(),
-	endDate: z.iso.datetime(),
-	currentRound: z.number().min(0),
-	isWomanOnly: z.boolean(),
+	min_player: z.number().min(2),
+	max_player: z.number().max(32),
+	min_elo: z.number().min(0).optional(),
+	max_elo: z.number().max(3000).optional(),
+	current_round: z.number().optional(),
+	woman_only: z.boolean(),
+	status: z.enum(['waiting', 'pending', 'finished']).catch('finished'),
+	end_inscription_date: z.iso.datetime(),
+	current_round: z.number().min(0),
 });
 
 // export const getAllTournamentQueryValidator = z.object({

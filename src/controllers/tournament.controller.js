@@ -1,11 +1,10 @@
-import { TournamentListingDTO } from '../dtos/tournament.dto.js';
 import tournamentService from '../services/tournament.service.js';
 
 const tournamentController = {
 	create: async (req, res) => {
-		const tournament = await tournamentService.create(req.data, req.user.id);
-		const dto = new TournamentListingDTO(tournament);
-		res.status(201).json({ data: dto });
+		const tournament = await tournamentService.create(req.data);
+		// const tournament = await tournamentService.create(req.data, req.user.id);
+		res.status(201).json({ tournament });
 	},
 
 	getAll: async (req, res) => {

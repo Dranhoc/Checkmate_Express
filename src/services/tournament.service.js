@@ -5,13 +5,15 @@ import { Op } from 'sequelize';
 
 const tournamentService = {
 	create: async (data) => {
+		console.log(`   --🏴‍☠️ 🏴‍☠️--`);
+		console.log(data);
+
 		const endDate = dayjs(data.end_inscription_date);
+		const creationDate = dayjs(data.createdAt);
 		const minPlayer = data.min_player;
 		const maxPlayer = data.max_player;
-		const minElo = data.minElo;
-		const maxElo = data.maxElo;
 
-		const minEndDate = endDate.add(minPlayer, 'day');
+		const minEndDate = creationDate.add(minPlayer, 'day');
 		if (endDate < minEndDate) {
 			throw new DateNotFarEnoughError();
 		}
@@ -20,6 +22,8 @@ const tournamentService = {
 			throw new MinNumberOfPlayersError();
 		}
 
+		const minElo = data.min_elo;
+		const maxElo = data.max_elo;
 		if (minElo > maxElo) {
 			throw new MinELOOfPlayersError();
 		}
