@@ -1,35 +1,32 @@
 import { DataTypes } from 'sequelize';
 import sequelize from '../config.js';
 
-const Concert = sequelize.define(
-	'Concert',
+const Match = sequelize.define(
+	'Match',
 	{
 		id: {
 			type: DataTypes.INTEGER,
 			autoIncrement: true,
 			primaryKey: true,
 		},
-		name: {
-			type: DataTypes.STRING,
-			allowNull: false,
-		},
-		date: {
-			type: DataTypes.DATE,
-			allowNull: false,
-		},
-		visible: {
+		isNull: {
 			type: DataTypes.BOOLEAN,
+			allowNull: false,
 			defaultValue: false,
 		},
-		price: {
-			type: DataTypes.DOUBLE,
+		winner: {
+			type: DataTypes.UUID,
 			allowNull: true,
+		},
+		status: {
+			type: DataTypes.ENUM('pending', 'waiting', 'finished'),
+			allowNull: false,
 		},
 	},
 	{
-		tableName: 'concerts',
+		tableName: 'matches',
 		paranoid: true,
 	},
 );
 
-export default Concert;
+export default Match;

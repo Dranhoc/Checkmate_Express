@@ -12,6 +12,12 @@ const User = sequelize.define(
 		email: {
 			type: DataTypes.STRING,
 			allowNull: false,
+			unique: true,
+		},
+		pseudo: {
+			type: DataTypes.STRING,
+			allowNull: false,
+			unique: true,
 		},
 		password: {
 			type: DataTypes.STRING,
@@ -19,15 +25,26 @@ const User = sequelize.define(
 		},
 		birthDate: {
 			type: DataTypes.DATE,
-			allowNull: true,
+			allowNull: false,
 		},
-		role: {
-			type: DataTypes.STRING,
-			allowNull: true,
+		gender: {
+			type: DataTypes.ENUM('male', 'female', 'other'),
+			allowNull: false,
+		},
+		isAdmin: {
+			type: DataTypes.BOOLEAN,
+			allowNull: false,
+			defaultValue: false,
+		},
+		elo: {
+			type: DataTypes.INTEGER,
+			allowNull: false,
+			defaultValue: 1200,
 		},
 	},
 	{
 		tableName: 'users',
+		paranoid: true,
 	},
 );
 

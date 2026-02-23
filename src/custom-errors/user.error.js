@@ -5,11 +5,11 @@ export class EmailAlreadyExistsError extends Error {
 		super('Email already exists');
 	}
 }
-
-export class UserTooYoungError extends Error {
+export class PseudoAlreadyExistsError extends Error {
 	statusCode = 400;
+
 	constructor() {
-		super('User is too young');
+		super('Pseudo already exists');
 	}
 }
 

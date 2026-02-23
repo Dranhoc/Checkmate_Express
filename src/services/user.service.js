@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
 import db from '../database/index.js';
 import bcrypt from 'bcrypt';
-import { EmailAlreadyExistsError, InvalidCredentialsError, UserTooYoungError } from '../custom-errors/user.error.js';
+import { EmailAlreadyExistsError, InvalidCredentialsError, PseudoAlreadyExistsError } from '../custom-errors/user.error.js';
 const { ENCRYPTION_ROUND } = process.env;
 
 const userService = {
@@ -16,12 +16,16 @@ const userService = {
 			// TODO custom error
 			throw new EmailAlreadyExistsError();
 		}
-		// plus de 18ans
-		const checkDate = dayjs().subtract(18, 'year');
-		const birthDate = dayjs(data.birthDate);
-		if (birthDate > checkDate) {
-			throw new UserTooYoungError();
+		const existingPseudo = await db.User.findOne({
+			where: {
+				pseudo: data.pseudo,
+			},
+		});
+		if (existingPseudo) {
+			// TODO custom error
+			throw new PseudoAlreadyExistsError();
 		}
+
 		data.password = bcrypt.hashSync(data.password, +ENCRYPTION_ROUND);
 		const newUser = await db.User.create(data);
 		return newUser;

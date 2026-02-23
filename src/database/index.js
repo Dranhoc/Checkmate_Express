@@ -1,52 +1,65 @@
 import sequelize from './config.js';
 
+import Category from './entities/category.entity.js';
+import Match from './entities/match.entity.js';
+import Tournament from './entities/tournament.entity.js';
 import User from './entities/user.entity.js';
-import Concert from './entities/concert.entity.js';
-import Ticket from './entities/ticket.entity.js';
 
-// Concert is organize by User
-Concert.belongsTo(User, {
-	as: 'organizer',
-	foreignKey: {
-		allowNull: false,
-		name: 'organizerId',
-	},
-});
-// A User can organize multiple concert
-User.hasMany(Concert, {
-	as: 'concerts',
-	foreignKey: 'organizerId',
+// User can participate multiple tournament
+User.belongsToMany(Tournament, {
+	through: 'Users_Tournaments',
+	foreignKey: 'userId',
+	otherKey: 'tournamentId',
+	as: 'tournaments',
 });
 
-//A ticket is for a concert
-Ticket.belongsTo(Concert, {
-	as: 'concert',
+// Tournament can have multiple users
+Tournament.belongsToMany(User, {
+	through: 'Users_Tournaments',
+	foreignKey: 'tournamentId',
+	otherKey: 'userId',
+	as: 'participants',
+});
+
+//A match belongs to a Tournament
+Match.belongsTo(Tournament, {
+	as: 'match',
+	foreignKey: 'tournamentId',
+});
+
+//Tournament have one category
+Tournament.belongsTo(Category, {
+	as: 'category',
+	foreignKey: 'categoryId',
+});
+
+//Categories have many tournaments
+Category.hasMany(Tournament, {
+	as: 'tournaments_category',
+	foreignKey: 'categoryName',
+});
+
+// A user can play multiple vanilla matches
+User.hasMany(Match, {
+	as: 'whitePlaying',
 	foreignKey: {
+		name: 'white_userId',
 		allowNull: false,
-		name: 'concertId',
 	},
 });
-// A concert can have multiple tickets
-Concert.hasMany(Ticket, {
-	as: 'tickets',
-	foreignKey: 'concertId',
-});
-// A ticket is owned by a User
-Ticket.belongsTo(User, {
-	as: 'owner',
+// A user can play multiple chocolate matches
+User.hasMany(Match, {
+	as: 'blackPlaying',
 	foreignKey: {
+		name: 'black_userId',
 		allowNull: false,
-		name: 'ownerId',
 	},
-});
-// A User can have multiple Tickets
-User.hasMany(Ticket, {
-	foreignKey: 'ownerId',
 });
 
 export default {
 	User,
-	Concert,
-	Ticket,
+	Category,
+	Match,
+	Tournament,
 	sequelize,
 };
