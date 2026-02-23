@@ -27,16 +27,20 @@ Match.belongsTo(Tournament, {
 	foreignKey: 'tournamentId',
 });
 
-//Tournament have one category
-Tournament.belongsTo(Category, {
+//Tournament have one more categories
+Tournament.belongsToMany(Category, {
+	through: 'Tournament_Categories',
+	foreignKey: 'tournamentId',
+	otherKey: 'categoryName',
 	as: 'category',
-	foreignKey: 'categoryId',
 });
 
 //Categories have many tournaments
-Category.hasMany(Tournament, {
-	as: 'tournaments_category',
+Category.belongsToMany(Tournament, {
+	through: 'Tournament_Categories',
 	foreignKey: 'categoryName',
+	otherKey: 'tournamentId',
+	as: 'tournaments_category',
 });
 
 // A user can play multiple vanilla matches
