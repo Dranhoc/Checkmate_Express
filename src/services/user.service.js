@@ -6,14 +6,12 @@ const { ENCRYPTION_ROUND } = process.env;
 
 const userService = {
 	create: async (data) => {
-		// pas deux fois le même email
 		const existingEmail = await db.User.findOne({
 			where: {
 				email: data.email,
 			},
 		});
 		if (existingEmail) {
-			// TODO custom error
 			throw new EmailAlreadyExistsError();
 		}
 		const existingPseudo = await db.User.findOne({
@@ -22,7 +20,6 @@ const userService = {
 			},
 		});
 		if (existingPseudo) {
-			// TODO custom error
 			throw new PseudoAlreadyExistsError();
 		}
 

@@ -4,7 +4,6 @@ export const bodyValidator = (dataValidator) => {
 		console.log(`   --🚨 ${{ data, success, error }} 🚨--`);
 		if (!success) {
 			//Le formulaire reçu n'est pas valide
-			//TODO gérer les error
 			const { fieldErrors } = error.flatten();
 			res.status(400).json({ errors: fieldErrors });
 		} else {

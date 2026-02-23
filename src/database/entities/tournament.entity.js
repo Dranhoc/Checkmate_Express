@@ -54,6 +54,7 @@ const Tournament = sequelize.define(
 		status: {
 			type: DataTypes.ENUM('pending', 'waiting', 'finished'),
 			allowNull: false,
+			defaultValue: 'waiting',
 		},
 	},
 	{

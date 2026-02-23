@@ -13,7 +13,7 @@ const { APP_PORT } = process.env;
 await db.sequelize.authenticate();
 
 //TODO enlever quand on passe en PROD !!!
-await db.sequelize.sync({ force: true });
+await db.sequelize.sync({ alter: true });
 
 const app = express();
 
