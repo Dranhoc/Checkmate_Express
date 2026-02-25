@@ -18,6 +18,10 @@ const Match = sequelize.define(
 			type: DataTypes.UUID,
 			allowNull: true,
 		},
+		tournament_round: {
+			type: DataTypes.INTEGER,
+			allowNull: false,
+		},
 		status: {
 			type: DataTypes.ENUM('pending', 'waiting', 'finished'),
 			allowNull: false,

@@ -10,6 +10,9 @@ const authController = {
 	},
 	login: async (req, res) => {
 		const user = await userService.login(req.data);
+		console.log(`   --👉 req.data 👈--`);
+		console.log(req.data);
+		console.log(`   --👉 end of req.data 👈--`);
 
 		// générer un JWT
 		const token = generateToken(user);

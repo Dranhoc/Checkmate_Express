@@ -20,3 +20,10 @@ export class InvalidCredentialsError extends Error {
 		super('Invalid credentials');
 	}
 }
+export class NoPseudoOrEmailProvidedError extends Error {
+	statusCode = 400;
+
+	constructor() {
+		super('No email or pseudo provided');
+	}
+}

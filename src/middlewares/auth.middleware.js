@@ -39,10 +39,13 @@ export const connected = (onlyForRoles) => {
 		}
 		//si on a des roles qui sont précisés, on check le role
 		if (onlyForRoles) {
-			//récupérer le role du user
+			console.log(`   --👉 req.user 👈--`);
+			console.log(req.user);
+			console.log(`   --👉 end of req.user 👈--`);
+			//récupérer le booleen de user.role
 			const userRole = req.user.role;
-			//vérifier si le role du role fait partie du tableau
-			if (!onlyForRoles.includes(userRole)) {
+
+			if (!userRole) {
 				res.status(403).send();
 				return;
 			}
