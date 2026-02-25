@@ -23,8 +23,11 @@ const Match = sequelize.define(
 			allowNull: false,
 		},
 		status: {
-			type: DataTypes.ENUM('pending', 'waiting', 'finished'),
+			type: DataTypes.STRING,
 			allowNull: false,
+			validate: {
+				isIn: [['pending', 'waiting', 'finished']],
+			},
 		},
 	},
 	{

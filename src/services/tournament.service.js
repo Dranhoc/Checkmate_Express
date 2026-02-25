@@ -65,15 +65,85 @@ const tournamentService = {
 		}
 	},
 
-	getAll: async () => {
-		return await db.Tournament.findAll({
+	getAll: async (filter, pagination) => {
+		const where = {};
+		const categoryWhere = {};
+
+		if (filter) {
+			if (filter.name) {
+				where.name = { [Op.iLike]: `%${filter.name}%` };
+			}
+
+			if (filter.status) {
+				where.status = filter.status;
+			} else {
+				where.status = { [Op.ne]: 'finished' };
+			}
+
+			if (filter.fromElo && filter.toElo && filter.fromElo <= filter.toElo) {
+				where.min_elo = { [Op.gte]: filter.fromElo };
+				where.max_elo = { [Op.lte]: filter.toElo };
+			} else if (filter.elo) {
+				where.min_elo = { [Op.lte]: filter.elo };
+				where.max_elo = { [Op.gte]: filter.elo };
+			}
+
+			if (filter.fromDate && filter.toDate) {
+				where.end_inscription_date = {
+					[Op.between]: [filter.fromDate, filter.toDate],
+				};
+			}
+
+			if (filter.category) {
+				categoryWhere.categoryName = filter.category;
+			}
+		}
+
+		const order = [];
+		if (pagination.orders?.date) {
+			order.push(['updatedAt', pagination.orders.date]);
+		}
+
+		const tournaments = await db.Tournament.findAll({
+			where,
+			order,
+			offset: pagination.offset,
+			limit: pagination.limit,
 			include: [
 				{
 					model: db.Category,
 					as: 'category',
+					where: Object.keys(categoryWhere).length > 0 ? categoryWhere : null,
+					required: Object.keys(categoryWhere).length > 0,
+				},
+				{
+					model: db.User,
+					as: 'participant',
 				},
 			],
 		});
+		return tournaments;
+	},
+	getById: async (tournamentId) => {
+		const tournament = await db.Tournament.findByPk(tournamentId, {
+			include: [
+				{ model: db.Category, as: 'category' },
+				{ model: db.User, as: 'participant' },
+			],
+		});
+
+		if (!tournament) throw new TournamentNotExistError();
+
+		const currentMatches = await db.Match.findAll({
+			where: {
+				tournamentId: tournament.id,
+				tournament_round: tournament.current_round,
+			},
+		});
+
+		tournament.currentMatches = currentMatches || [];
+
+		return tournament;
 	},
 
 	register: async (tournamentId, userId) => {
@@ -119,54 +189,6 @@ const tournamentService = {
 		await tournament.addParticipant(user);
 		return `${tournament.name} successfully registered ${user.pseudo}`;
 	},
-	// getAll: async (filter, pagination) => {
-	// 	const where = {};
-	// 	if (filter) {
-	// 		if (filter.name) {
-	// 			where.name = {
-	// 				[Op.iLike]: `%${filter.name}%`,
-	// 			};
-	// 		}
-	// 		if (filter.fromPrice && filter.toPrice) {
-	// 			where.price = {
-	// 				[Op.between]: [filter.fromPrice, filter.toPrice],
-	// 			};
-	// 		}
-	// 		if (filter.fromDate && filter.toDate) {
-	// 			where.date = {
-	// 				[Op.gte]: filter.fromDate,
-	// 			};
-	// 		}
-	// 	}
-	// 	const order = [];
-	// 	if (pagination.orders) {
-	// 		if (pagination.orders.price) {
-	// 			order.push(['price', pagination.orders.price]);
-	// 		}
-	// 		if (pagination.orders.date) {
-	// 			order.push(['date', pagination.orders.date]);
-	// 		}
-	// 		if (pagination.orders.name) {
-	// 			order.push(['name', pagination.orders.name]);
-	// 		}
-	// 	}
-	// 	const concerts = await db.Concert.findAll({
-	// 		where,
-	// 		offset: pagination.offset,
-	// 		limit: pagination.limit,
-	// 		order,
-	// 	});
-	// 	return concerts;
-	// },
-	// delete: async (id, requester) => {
-	// 	const concert = await db.Concert.findByPk(id);
-	// 	if (requester.role !== 'admin') {
-	// 		if (concert.organizerId !== requester.id) {
-	// 			throw new DontOrganizeConcertError();
-	// 		}
-	// 	}
-	// 	await concert?.destroy();
-	// },
 };
 
 export default tournamentService;

@@ -1,3 +1,4 @@
+import { TournamentListingDTO } from '../dtos/tournament.dto.js';
 import tournamentService from '../services/tournament.service.js';
 
 const tournamentController = {
@@ -7,8 +8,25 @@ const tournamentController = {
 	},
 
 	getAll: async (req, res) => {
-		const data = await tournamentService.getAll();
-		res.status(200).json(data);
+		const { name, status, category, elo, fromElo, toElo, fromDate, toDate, orderByUpdateDate, canRegister, isRegistered, offset, limit } = req.validatedQuery;
+
+		const filter = { name, status, category, elo, fromElo, toElo, fromDate, toDate, canRegister, isRegistered };
+		const pagination = {
+			orders: {
+				date: orderByUpdateDate,
+			},
+			limit,
+			offset,
+		};
+		const tournaments = await tournamentService.getAll(filter, pagination);
+		const tournamentsDTO = tournaments.map((tournament) => new TournamentListingDTO(tournament));
+		res.status(200).json(tournamentsDTO);
+	},
+	getById: async (req, res) => {
+		const { id } = req.params;
+		const tournament = await tournamentService.getById(id);
+		const tournamentDTO = new TournamentListingDTO(tournament);
+		res.status(200).json(tournamentDTO);
 	},
 	delete: async (req, res) => {
 		const { id } = req.params;
@@ -23,29 +41,11 @@ const tournamentController = {
 		const data = await tournamentService.register(tournamentId, userId);
 		res.status(200).json(data);
 	},
-	// getAll: async (req, res) => {
-	// 	const { name, fromPrice, toPrice, fromDate, orderByName, orderByDate, orderByPrice, offset, limit } = req.validatedQuery;
 
-	// 	const filter = { name, fromPrice, toPrice, fromDate };
-	// 	const pagination = {
-	// 		orders: {
-	// 			price: orderByPrice,
-	// 			date: orderByDate,
-	// 			name: orderByName,
-	// 		},
-	// 		limit,
-	// 		offset,
-	// 	};
 	// 	const concerts = await concertService.getAll(filter, pagination);
 	// 	const dtos = concerts.map((c) => new ConcertListingDTO(c));
 
 	// 	res.status(200).json({ data: dtos });
-	// },
-
-	// delete: async (req, res) => {
-	// 	await concertService.delete(req.params.id, req.user);
-
-	// 	res.status(204).send();
 	// },
 };
 

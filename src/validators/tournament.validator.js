@@ -16,14 +16,18 @@ export const createTournamentValidator = z.object({
 	categories: z.array(z.string()).optional().default([]),
 });
 
-// export const getAllTournamentQueryValidator = z.object({
-// 	name: z.string().optional().catch(null),
-// 	fromPrice: z.number().optional().catch(null),
-// 	toPrice: z.number().optional().catch(null),
-// 	fromDate: z.iso.date().optional().catch(null),
-// 	orderByName: z.enum(['asc', 'desc']).optional().catch('desc'),
-// 	orderByDate: z.enum(['asc', 'desc']).optional().catch('desc'),
-// 	orderByPrice: z.enum(['asc', 'desc']).optional().catch('desc'),
-// 	offset: z.coerce.number().min(0).default(0),
-// 	limit: z.coerce.number().min(1).max(100).default(20),
-// });
+export const getAllTournamentQueryValidator = z.object({
+	name: z.string().optional().catch(null),
+	status: z.enum(['waiting', 'pending', 'finished']).optional().catch(null),
+	category: z.enum(['Junior', 'Veteran', 'Senior', 'AllAges']).optional().catch(null),
+	elo: z.coerce.number().min(0).max(3000).optional().catch(null),
+	fromElo: z.coerce.number().min(0).max(3000).optional().catch(null),
+	toElo: z.coerce.number().min(0).max(3000).optional().catch(null),
+	fromDate: z.iso.date().optional().catch(null),
+	toDate: z.iso.date().optional().catch(null),
+	orderByUpdateDate: z.enum(['asc', 'desc']).default('desc'),
+	canRegister: z.boolean().optional().catch(null),
+	isRegistered: z.boolean().optional().catch(null),
+	offset: z.coerce.number().min(0).default(0),
+	limit: z.coerce.number().min(1).max(100).default(10),
+});
