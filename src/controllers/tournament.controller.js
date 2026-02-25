@@ -3,14 +3,17 @@ import tournamentService from '../services/tournament.service.js';
 const tournamentController = {
 	create: async (req, res) => {
 		const tournament = await tournamentService.create(req.data);
-		// const tournament = await tournamentService.create(req.data, req.user.id);
 		res.status(201).json({ tournament });
 	},
 
 	getAll: async (req, res) => {
-		// const { id, name, location, playerMin, playerMax, eloMin, eloMax, endDate, currentRound, isWomanOnly} = req.query
 		const data = await tournamentService.getAll();
 		res.status(200).json(data);
+	},
+	delete: async (req, res) => {
+		const { id } = req.params;
+		const tournament = await tournamentService.delete(id);
+		res.status(200).json({ tournament });
 	},
 	// getAll: async (req, res) => {
 	// 	const { name, fromPrice, toPrice, fromDate, orderByName, orderByDate, orderByPrice, offset, limit } = req.validatedQuery;

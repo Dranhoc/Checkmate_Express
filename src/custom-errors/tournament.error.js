@@ -19,3 +19,17 @@ export class MinELOOfPlayersError extends Error {
 		super('The minimum ELO must be below or equal to the maximum');
 	}
 }
+export class TournamentIdNotFoundError extends Error {
+	statusCode = 400;
+
+	constructor() {
+		super('Tournament ID not found');
+	}
+}
+export class TournamentAlreadyStartedError extends Error {
+	statusCode = 400;
+
+	constructor() {
+		super("Tournament already started, you can't delete it");
+	}
+}

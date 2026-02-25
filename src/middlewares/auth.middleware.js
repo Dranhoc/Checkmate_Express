@@ -17,7 +17,7 @@ export const authentification = (req, res, next) => {
 			//sauvegarde dans l'objet req
 			req.user = {
 				id: decoded.id,
-				role: decoded.role,
+				isAdmin: decoded.isAdmin,
 			};
 		} catch (error) {
 			console.log(error);
@@ -29,27 +29,18 @@ export const authentification = (req, res, next) => {
 	next();
 };
 
-// Function restriction pour arriver à la route (ex : "est-ce que le user est admin ?")
-
-export const connected = (onlyForRoles) => {
+export const connected = (onlyAdmin) => {
 	return (req, res, next) => {
 		if (!req.user) {
-			res.status(401).send();
-			return;
+			return res.status(401).send();
 		}
-		//si on a des roles qui sont précisés, on check le role
-		if (onlyForRoles) {
-			console.log(`   --👉 req.user 👈--`);
-			console.log(req.user);
-			console.log(`   --👉 end of req.user 👈--`);
-			//récupérer le booleen de user.role
-			const userRole = req.user.role;
 
-			if (!userRole) {
-				res.status(403).send();
-				return;
+		if (onlyAdmin) {
+			if (req.user.isAdmin !== true) {
+				return res.status(403).send();
 			}
 		}
+
 		next();
 	};
 };

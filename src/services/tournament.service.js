@@ -1,12 +1,13 @@
 import dayjs from 'dayjs';
-import { DateNotFarEnoughError, MinELOOfPlayersError, MinNumberOfPlayersError } from '../custom-errors/tournament.error.js';
+import { DateNotFarEnoughError, MinELOOfPlayersError, MinNumberOfPlayersError, TournamentAlreadyStartedError, TournamentIdNotFoundError } from '../custom-errors/tournament.error.js';
 import db from '../database/index.js';
 import { Op } from 'sequelize';
 
 const tournamentService = {
 	create: async (data) => {
-		console.log(`   --🏴‍☠️ 🏴‍☠️--`);
+		console.log(`   --👉 data 👈--`);
 		console.log(data);
+		console.log(`   --👉 end of data 👈--`);
 
 		const endDate = dayjs(data.end_inscription_date);
 		const creationDate = dayjs(data.createdAt);
@@ -30,6 +31,19 @@ const tournamentService = {
 
 		const tournament = await db.Tournament.create(data);
 		return tournament;
+	},
+
+	delete: async (id) => {
+		const tournament = await db.Tournament.findByPk(id);
+		if (!tournament) {
+			throw new TournamentIdNotFoundError();
+		}
+		if (tournament.status === 'pending') {
+			await tournament.destroy();
+			return `Tournament ${tournament.name} successfully deleted`;
+		} else {
+			throw new TournamentAlreadyStartedError();
+		}
 	},
 
 	getAll: async () => {
