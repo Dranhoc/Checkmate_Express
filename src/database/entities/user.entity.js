@@ -28,8 +28,11 @@ const User = sequelize.define(
 			allowNull: false,
 		},
 		gender: {
-			type: DataTypes.ENUM('male', 'female', 'other'),
+			type: DataTypes.STRING,
 			allowNull: false,
+			validate: {
+				isIn: [['male', 'female', 'other']],
+			},
 		},
 		isAdmin: {
 			type: DataTypes.BOOLEAN,

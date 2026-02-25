@@ -15,6 +15,14 @@ const tournamentController = {
 		const tournament = await tournamentService.delete(id);
 		res.status(200).json({ tournament });
 	},
+	register: async (req, res) => {
+		const { tournamentId } = req.params;
+		const userId = req.user.id;
+		console.log(`   --🚨 ${userId} 🚨--`);
+		console.log(`   --🚨 ${tournamentId} 🚨--`);
+		const data = await tournamentService.register(tournamentId, userId);
+		res.status(200).json(data);
+	},
 	// getAll: async (req, res) => {
 	// 	const { name, fromPrice, toPrice, fromDate, orderByName, orderByDate, orderByPrice, offset, limit } = req.validatedQuery;
 

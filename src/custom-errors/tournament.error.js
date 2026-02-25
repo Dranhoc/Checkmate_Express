@@ -30,6 +30,55 @@ export class TournamentAlreadyStartedError extends Error {
 	statusCode = 400;
 
 	constructor() {
-		super("Tournament already started, you can't delete it");
+		super('Tournament already started');
+	}
+}
+export class TournamentNotExistError extends Error {
+	statusCode = 400;
+
+	constructor() {
+		super('Tournament not exists');
+	}
+}
+export class TournamentIsFullError extends Error {
+	statusCode = 400;
+
+	constructor() {
+		super('Tournament is full');
+	}
+}
+export class TournamentEloError extends Error {
+	statusCode = 400;
+
+	constructor() {
+		super('Your ELO is too high or too low for this tournament');
+	}
+}
+export class TournamentAgeNotCorrespondingError extends Error {
+	statusCode = 400;
+
+	constructor() {
+		super("Your age is not corresponding to the tournament's categories");
+	}
+}
+export class TournamentEndOfRegistrationError extends Error {
+	statusCode = 400;
+
+	constructor() {
+		super('The registrations has expired');
+	}
+}
+export class TournamentNotForMalesError extends Error {
+	statusCode = 400;
+
+	constructor() {
+		super('This tournament is women only');
+	}
+}
+export class AlreadyRegisteredError extends Error {
+	statusCode = 400;
+
+	constructor() {
+		super('You are already registered for this tournament');
 	}
 }

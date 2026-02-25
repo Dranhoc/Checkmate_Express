@@ -27,3 +27,10 @@ export class NoPseudoOrEmailProvidedError extends Error {
 		super('No email or pseudo provided');
 	}
 }
+export class UserNotExistError extends Error {
+	statusCode = 400;
+
+	constructor() {
+		super('User not exists or not connected');
+	}
+}

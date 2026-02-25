@@ -18,7 +18,7 @@ Tournament.belongsToMany(User, {
 	through: 'Users_Tournaments',
 	foreignKey: 'tournamentId',
 	otherKey: 'userId',
-	as: 'participants',
+	as: 'participant',
 });
 
 //A match belongs to a Tournament

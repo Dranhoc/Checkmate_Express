@@ -9,6 +9,7 @@ const tournamentRouter = Router();
 tournamentRouter.post('/', connected('admin'), bodyValidator(createTournamentValidator), tournamentController.create);
 //TODO Ajouter le validator
 tournamentRouter.get('/', tournamentController.getAll);
+tournamentRouter.post('/register/:tournamentId', connected(), tournamentController.register);
 tournamentRouter.delete('/:id', connected('admin'), tournamentController.delete);
 // tournamentRouter.get('/', queryValidator(getAllTournamentQueryValidator), tournamentController.getAll);
 
