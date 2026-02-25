@@ -14,4 +14,9 @@ export const categoryData = [
 		age_min: 60,
 		age_max: 135,
 	},
+	{
+		name: 'AllAges',
+		age_min: 0,
+		age_max: 135,
+	},
 ];

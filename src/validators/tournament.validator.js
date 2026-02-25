@@ -13,6 +13,7 @@ export const createTournamentValidator = z.object({
 	status: z.enum(['waiting', 'pending', 'finished']).catch('finished'),
 	end_inscription_date: z.iso.datetime(),
 	current_round: z.number().min(0),
+	categories: z.array(z.string()).optional().default([]),
 });
 
 // export const getAllTournamentQueryValidator = z.object({

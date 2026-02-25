@@ -1,29 +1,28 @@
 export class UserListingDTO {
 	id;
 	email;
-	role;
+	isAdmin;
 
 	constructor(user) {
 		this.id = user.id;
 		this.email = user.email;
-		this.role = user.role;
+		this.isAdmin = user.isAdmin;
 	}
 }
 
 export class UserDetailsDTO {
 	id;
 	email;
-	role;
+	isAdmin;
+	birthDate;
 	createdAt;
 	updatedAt;
-
-	//tickets
-	//OrganizedConcerts
 
 	constructor(user) {
 		this.id = user.id;
 		this.email = user.email;
-		this.role = user.role;
+		this.birthDate = user.birthDate;
+		this.isAdmin = user.isAdmin;
 		this.createdAt = user.createdAt;
 		this.updatedAt = user.updatedAt;
 	}

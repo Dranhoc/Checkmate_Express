@@ -2,35 +2,40 @@ import dayjs from 'dayjs';
 import { DateNotFarEnoughError, MinELOOfPlayersError, MinNumberOfPlayersError, TournamentAlreadyStartedError, TournamentIdNotFoundError } from '../custom-errors/tournament.error.js';
 import db from '../database/index.js';
 import { Op } from 'sequelize';
+import { CategoryNotFoundError } from '../custom-errors/category.error.js';
 
 const tournamentService = {
-	create: async (data) => {
-		console.log(`   --👉 data 👈--`);
-		console.log(data);
-		console.log(`   --👉 end of data 👈--`);
+	create: async (payload) => {
+		console.log(`   --👉 payload 👈--`, payload);
 
-		const endDate = dayjs(data.end_inscription_date);
-		const creationDate = dayjs(data.createdAt);
-		const minPlayer = data.min_player;
-		const maxPlayer = data.max_player;
+		const endDate = dayjs(payload.end_inscription_date);
+		const creationDate = dayjs(payload.createdAt);
+		const minPlayer = payload.min_player;
+		const maxPlayer = payload.max_player;
 
 		const minEndDate = creationDate.add(minPlayer, 'day');
-		if (endDate < minEndDate) {
-			throw new DateNotFarEnoughError();
+		if (endDate < minEndDate) throw new DateNotFarEnoughError();
+		if (minPlayer > maxPlayer) throw new MinNumberOfPlayersError();
+
+		const minElo = payload.min_elo;
+		const maxElo = payload.max_elo;
+		if (minElo > maxElo) throw new MinELOOfPlayersError();
+
+		const { categories, ...tournamentData } = payload;
+
+		const newTournament = await db.Tournament.create(tournamentData);
+
+		if (categories && Array.isArray(categories) && categories.length > 0) {
+			for (const catName of categories) {
+				const category = await db.Category.findByPk(catName);
+				if (!category) {
+					throw new CategoryNotFoundError();
+				}
+				await newTournament.addCategory(category);
+			}
 		}
 
-		if (minPlayer > maxPlayer) {
-			throw new MinNumberOfPlayersError();
-		}
-
-		const minElo = data.min_elo;
-		const maxElo = data.max_elo;
-		if (minElo > maxElo) {
-			throw new MinELOOfPlayersError();
-		}
-
-		const tournament = await db.Tournament.create(data);
-		return tournament;
+		return newTournament;
 	},
 
 	delete: async (id) => {
@@ -40,14 +45,21 @@ const tournamentService = {
 		}
 		if (tournament.status === 'pending') {
 			await tournament.destroy();
-			return `Tournament ${tournament.name} successfully deleted`;
+			return `${tournament.name} successfully deleted`;
 		} else {
 			throw new TournamentAlreadyStartedError();
 		}
 	},
 
 	getAll: async () => {
-		return await db.Tournament.findAll();
+		return await db.Tournament.findAll({
+			include: [
+				{
+					model: db.Category,
+					as: 'category',
+				},
+			],
+		});
 	},
 	// getAll: async (filter, pagination) => {
 	// 	const where = {};

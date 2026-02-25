@@ -3,6 +3,7 @@ import db from '../index.js';
 import { tournamentData } from './tournament.seed.js';
 import { categoryData } from './category.seed.js';
 import { userData } from './user.seed.js';
+import { tournamentCategoriesData } from './tournamentCategories.seed.js';
 
 async function runSeed() {
 	try {
@@ -10,9 +11,10 @@ async function runSeed() {
 		console.log(`   --🚨 Supabase connexion established 🚨--`);
 		await db.sequelize.sync({ force: true });
 
-		await db.Tournament.bulkCreate(tournamentData);
-		await db.Category.bulkCreate(categoryData);
 		await db.User.bulkCreate(userData);
+		await db.Category.bulkCreate(categoryData);
+		await db.Tournament.bulkCreate(tournamentData);
+		await db.sequelize.models.Tournament_Categories.bulkCreate(tournamentCategoriesData);
 
 		console.log(`   --👉 The seeds are all planted 👈--`);
 	} catch (error) {
