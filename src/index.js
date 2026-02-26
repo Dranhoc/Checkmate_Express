@@ -1,3 +1,8 @@
+import 'console-separator';
+import { configure } from 'console-separator';
+configure({
+	color: 'green',
+});
 import 'dotenv/config';
 
 import express from 'express';
@@ -24,10 +29,9 @@ app.use(express.json());
 
 app.use(morgan('tiny'));
 app.use(authentification);
-//TODO routing
 app.use(router);
 app.use(errorHandler);
 
 app.listen(APP_PORT, () => {
-	console.log(`   --🚨 Web API available at http://localhost:${APP_PORT} 🚨--`);
+	console.alog(`Web API available at http://localhost:${APP_PORT}`);
 });
