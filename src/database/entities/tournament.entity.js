@@ -56,7 +56,7 @@ const Tournament = sequelize.define(
 			allowNull: false,
 			defaultValue: 'pending',
 			validate: {
-				isIn: [['pending', 'waiting', 'finished']],
+				isIn: [['pending', 'inProgress', 'finished']],
 			},
 		},
 	},

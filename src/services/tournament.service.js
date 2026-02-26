@@ -6,11 +6,11 @@ import {
 	TournamentAlreadyStartedError,
 	TournamentIdNotFoundError,
 	TournamentNotExistError,
+	UserNotRegisteredError,
 } from '../custom-errors/tournament.error.js';
 import db from '../database/index.js';
 import { Op } from 'sequelize';
 import { CategoryNotFoundError } from '../custom-errors/category.error.js';
-import { UserNotExistError } from '../custom-errors/user.error.js';
 import { canRegister } from '../utils/tournamentRegister.utils.js';
 
 const tournamentService = {
@@ -158,6 +158,7 @@ const tournamentService = {
 		});
 		return tournaments;
 	},
+
 	getById: async (tournamentId) => {
 		const tournament = await db.Tournament.findByPk(tournamentId, {
 			include: [
@@ -184,6 +185,32 @@ const tournamentService = {
 		const userTournament = await canRegister(tournamentId, userId);
 		await userTournament.tournament.addParticipant(userTournament.user);
 		return `${userTournament.tournament.name} successfully registered ${userTournament.user.pseudo}`;
+	},
+
+	unsubscribe: async (tournamentId, userId) => {
+		const tournamentRegistered = await db.Tournament.findOne({
+			where: { id: tournamentId },
+			include: [
+				{
+					model: db.User,
+					as: 'participant',
+					where: { id: userId },
+				},
+			],
+		});
+		if (!tournamentRegistered) {
+			throw new UserNotRegisteredError();
+		}
+		if (tournamentRegistered.status !== 'pending') {
+			throw new TournamentAlreadyStartedError();
+		} else {
+			await db.sequelize.models.Users_Tournaments.destroy({
+				where: {
+					userId: userId,
+					tournamentId: tournamentId,
+				},
+			});
+		}
 	},
 };
 

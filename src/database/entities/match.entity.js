@@ -26,7 +26,7 @@ const Match = sequelize.define(
 			type: DataTypes.STRING,
 			allowNull: false,
 			validate: {
-				isIn: [['pending', 'waiting', 'finished']],
+				isIn: [['pending', 'inProgress', 'finished']],
 			},
 		},
 	},

@@ -42,12 +42,17 @@ const tournamentController = {
 
 			res.status(200).json({ message: data });
 		} catch (error) {
-			console.error(error);
-
 			res.status(error.statusCode || 400).json({
 				error: error.message || 'Registration failed',
 			});
 		}
+	},
+	unsubscribe: async (req, res) => {
+		const userId = req.user.id;
+		const { tournamentId } = req.params;
+
+		const data = await tournamentService.unsubscribe(tournamentId, userId);
+		res.status(200).json({ message: 'subscription deleted' });
 	},
 };
 

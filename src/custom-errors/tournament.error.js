@@ -79,6 +79,13 @@ export class AlreadyRegisteredError extends Error {
 	statusCode = 400;
 
 	constructor() {
-		super('You are already registered for this tournament');
+		super('You are already registered to this tournament');
+	}
+}
+export class UserNotRegisteredError extends Error {
+	statusCode = 400;
+
+	constructor() {
+		super('You are not registered to this tournament');
 	}
 }
