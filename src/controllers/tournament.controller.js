@@ -18,7 +18,7 @@ const tournamentController = {
 			limit,
 			offset,
 		};
-		const tournaments = await tournamentService.getAll(filter, pagination);
+		const tournaments = await tournamentService.getAll(filter, pagination, req.user);
 		const tournamentsDTO = tournaments.map((tournament) => new TournamentListingDTO(tournament));
 		res.status(200).json(tournamentsDTO);
 	},
@@ -34,19 +34,21 @@ const tournamentController = {
 		res.status(200).json({ tournament });
 	},
 	register: async (req, res) => {
-		const { tournamentId } = req.params;
-		const userId = req.user.id;
-		console.log(`   --🚨 ${userId} 🚨--`);
-		console.log(`   --🚨 ${tournamentId} 🚨--`);
-		const data = await tournamentService.register(tournamentId, userId);
-		res.status(200).json(data);
+		try {
+			const { tournamentId } = req.params;
+			const userId = req.user.id;
+
+			const data = await tournamentService.register(tournamentId, userId);
+
+			res.status(200).json({ message: data });
+		} catch (error) {
+			console.error(error);
+
+			res.status(error.statusCode || 400).json({
+				error: error.message || 'Registration failed',
+			});
+		}
 	},
-
-	// 	const concerts = await concertService.getAll(filter, pagination);
-	// 	const dtos = concerts.map((c) => new ConcertListingDTO(c));
-
-	// 	res.status(200).json({ data: dtos });
-	// },
 };
 
 export default tournamentController;

@@ -26,8 +26,8 @@ export const getAllTournamentQueryValidator = z.object({
 	fromDate: z.iso.date().optional().catch(null),
 	toDate: z.iso.date().optional().catch(null),
 	orderByUpdateDate: z.enum(['asc', 'desc']).default('desc'),
-	canRegister: z.boolean().optional().catch(null),
-	isRegistered: z.boolean().optional().catch(null),
+	canRegister: z.stringbool().optional().catch(null),
+	isRegistered: z.stringbool().optional().catch(null),
 	offset: z.coerce.number().min(0).default(0),
 	limit: z.coerce.number().min(1).max(100).default(10),
 });
