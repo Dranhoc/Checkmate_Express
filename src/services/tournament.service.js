@@ -1,17 +1,11 @@
 import dayjs from 'dayjs';
 import {
-	AlreadyRegisteredError,
 	DateNotFarEnoughError,
 	MinELOOfPlayersError,
 	MinNumberOfPlayersError,
-	TournamentAgeNotCorrespondingError,
 	TournamentAlreadyStartedError,
-	TournamentEloError,
-	TournamentEndOfRegistrationError,
 	TournamentIdNotFoundError,
-	TournamentIsFullError,
 	TournamentNotExistError,
-	TournamentNotForMalesError,
 } from '../custom-errors/tournament.error.js';
 import db from '../database/index.js';
 import { Op } from 'sequelize';
@@ -123,6 +117,20 @@ const tournamentService = {
 					[Op.in]: allowedIds,
 				};
 			}
+
+			if (filter.isRegistered) {
+				const tournaments = await db.Tournament.findAll({
+					include: [
+						{
+							model: db.User,
+							as: 'participant',
+							where: { id: user.id },
+						},
+					],
+				});
+
+				where.id = { [Op.in]: tournaments.map((tournament) => tournament.id) };
+			}
 		}
 
 		const order = [];
@@ -174,9 +182,6 @@ const tournamentService = {
 
 	register: async (tournamentId, userId) => {
 		const userTournament = await canRegister(tournamentId, userId);
-		console.log(`   --🚨 USERTOURNAMENT 🚨--`);
-		console.log(userTournament);
-
 		await userTournament.tournament.addParticipant(userTournament.user);
 		return `${userTournament.tournament.name} successfully registered ${userTournament.user.pseudo}`;
 	},
