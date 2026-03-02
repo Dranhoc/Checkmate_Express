@@ -26,6 +26,10 @@ Match.belongsTo(Tournament, {
 	as: 'match',
 	foreignKey: 'tournamentId',
 });
+Tournament.hasMany(Match, {
+	as: 'matches',
+	foreignKey: 'tournamentId',
+});
 
 //Tournament have one more categories
 Tournament.belongsToMany(Category, {

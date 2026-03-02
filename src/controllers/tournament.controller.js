@@ -54,6 +54,11 @@ const tournamentController = {
 		const data = await tournamentService.unsubscribe(tournamentId, userId);
 		res.status(200).json({ message: 'subscription deleted' });
 	},
+	start: async (req, res) => {
+		const { tournamentId } = req.params;
+		const tournament = await tournamentService.start(tournamentId);
+		res.status(200).json({ tournament });
+	},
 };
 
 export default tournamentController;

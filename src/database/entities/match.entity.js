@@ -9,6 +9,18 @@ const Match = sequelize.define(
 			autoIncrement: true,
 			primaryKey: true,
 		},
+		tournamentId: {
+			type: DataTypes.INTEGER,
+			allowNull: false,
+		},
+		white_userId: {
+			type: DataTypes.UUID,
+			allowNull: false,
+		},
+		black_userId: {
+			type: DataTypes.UUID,
+			allowNull: false,
+		},
 		isNull: {
 			type: DataTypes.BOOLEAN,
 			allowNull: false,
@@ -25,6 +37,7 @@ const Match = sequelize.define(
 		status: {
 			type: DataTypes.STRING,
 			allowNull: false,
+			defaultValue: 'pending',
 			validate: {
 				isIn: [['pending', 'inProgress', 'finished']],
 			},

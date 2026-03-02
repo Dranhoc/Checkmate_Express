@@ -1,9 +1,12 @@
+import 'console-separator';
 import 'dotenv/config';
 import db from '../index.js';
 import { tournamentData } from './tournament.seed.js';
 import { categoryData } from './category.seed.js';
 import { userData } from './user.seed.js';
 import { tournamentCategoriesData } from './tournamentCategories.seed.js';
+import { Op } from 'sequelize';
+import { tournamentsUsersData } from './participants.seed.js';
 
 async function runSeed() {
 	try {
@@ -15,6 +18,20 @@ async function runSeed() {
 		await db.Category.bulkCreate(categoryData);
 		await db.Tournament.bulkCreate(tournamentData);
 		await db.sequelize.models.Tournament_Categories.bulkCreate(tournamentCategoriesData);
+
+		const allUsers = await db.User.findAll({
+			where: {
+				pseudo: {
+					[Op.ne]: 'MisterCheckMate',
+				},
+			},
+		});
+
+		const tournamentsUsersData = [];
+		for (const e of allUsers) {
+			tournamentsUsersData.push({ userId: e.id, tournamentId: 7 });
+		}
+		await db.sequelize.models.Users_Tournaments.bulkCreate(tournamentsUsersData);
 
 		console.log(`   --👉 The seeds are all planted 👈--`);
 	} catch (error) {

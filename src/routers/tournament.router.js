@@ -10,6 +10,7 @@ tournamentRouter.post('/', connected('admin'), bodyValidator(createTournamentVal
 tournamentRouter.get('/', queryValidator(getAllTournamentQueryValidator), tournamentController.getAll);
 tournamentRouter.post('/register/:tournamentId', connected(), tournamentController.register);
 tournamentRouter.delete('/unsubscribe/:tournamentId', connected(), tournamentController.unsubscribe);
+tournamentRouter.post('/start/:tournamentId', connected('admin'), tournamentController.start);
 tournamentRouter.get('/:id', connected(), tournamentController.getById);
 tournamentRouter.delete('/:id', connected('admin'), tournamentController.delete);
 

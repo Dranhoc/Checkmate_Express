@@ -5,13 +5,17 @@ import {
 	MinNumberOfPlayersError,
 	TournamentAlreadyStartedError,
 	TournamentIdNotFoundError,
+	TournamentIsOverError,
+	TournamentMinPlayerNotReachError,
 	TournamentNotExistError,
+	TournamentRegistrationNotClosed,
 	UserNotRegisteredError,
 } from '../custom-errors/tournament.error.js';
 import db from '../database/index.js';
 import { Op } from 'sequelize';
 import { CategoryNotFoundError } from '../custom-errors/category.error.js';
 import { canRegister } from '../utils/tournamentRegister.utils.js';
+import createMatches from '../utils/createMatches.utils.js';
 
 const tournamentService = {
 	create: async (payload) => {
@@ -212,6 +216,44 @@ const tournamentService = {
 			});
 		}
 	},
+	start: async (tournamentId) => {
+		const tournament = await db.Tournament.findOne({
+			where: { id: tournamentId },
+			include: [
+				{
+					model: db.User,
+					as: 'participant',
+				},
+			],
+		});
+
+		if (!tournament) throw new TournamentIdNotFoundError();
+		if (tournament.status === 'finished') throw new TournamentIsOverError();
+
+		const countParticipants = await tournament.participant.length;
+		const endDate = dayjs(await tournament.end_inscription_date);
+		const today = dayjs();
+
+		if (tournament.min_player > countParticipants) throw new TournamentMinPlayerNotReachError();
+		if (endDate >= today) throw new TournamentRegistrationNotClosed();
+		tournament.status = 'inProgress';
+		tournament.current_round += 1;
+		tournament.save();
+		try {
+			createMatches.roundRobin(tournament);
+		} catch (error) {
+			tournament.current_round -= 1;
+			tournament.save();
+		}
+		return tournament;
+	},
 };
 
 export default tournamentService;
+
+// const matches = tournament.matches;
+// matches?.forEach((match) => {
+// 	if (match.status !== 'finished') throw new AllMatchesAreNotOverError();
+// });
+
+// await tournament.save();

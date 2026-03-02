@@ -76,4 +76,16 @@ export const tournamentData = [
 		end_inscription_date: endDate,
 		status: 'pending',
 	},
+	{
+		name: 'Welcome tournament',
+		location: 'Technifutur',
+		min_player: 6,
+		max_player: 32,
+		min_elo: 0,
+		max_elo: 3000,
+		current_round: 0,
+		woman_only: false,
+		end_inscription_date: endDate,
+		status: 'pending',
+	},
 ];

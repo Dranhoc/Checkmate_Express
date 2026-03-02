@@ -6,4 +6,5 @@ export const tournamentCategoriesData = [
 	{ tournamentId: 4, categoryName: 'AllAges' },
 	{ tournamentId: 5, categoryName: 'AllAges' },
 	{ tournamentId: 6, categoryName: 'AllAges' },
+	{ tournamentId: 7, categoryName: 'AllAges' },
 ];

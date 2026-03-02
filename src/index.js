@@ -1,7 +1,13 @@
-import 'console-separator';
-import { configure } from 'console-separator';
-configure({
+import { configureSeparator, configureClog, ansiBackground } from 'console-separator';
+configureSeparator({
+	char: '-',
 	color: 'green',
+});
+configureClog({
+	color: 'white',
+	bold: true,
+	background: ansiBackground(22),
+	emoji: '🔥',
 });
 import 'dotenv/config';
 
@@ -34,4 +40,7 @@ app.use(errorHandler);
 
 app.listen(APP_PORT, () => {
 	console.alog(`Web API available at http://localhost:${APP_PORT}`);
+	// console.plog('console.plog');
+	// console.ilog('Beautiful italian error');
+	// console.clog('console.clog');
 });

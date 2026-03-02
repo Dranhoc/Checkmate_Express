@@ -65,7 +65,14 @@ export class TournamentEndOfRegistrationError extends Error {
 	statusCode = 400;
 
 	constructor() {
-		super('The registrations has expired');
+		super('Registration is closed');
+	}
+}
+export class TournamentRegistrationNotClosed extends Error {
+	statusCode = 400;
+
+	constructor() {
+		super('Registration is not yet closed');
 	}
 }
 export class TournamentNotForMalesError extends Error {
@@ -87,5 +94,19 @@ export class UserNotRegisteredError extends Error {
 
 	constructor() {
 		super('You are not registered to this tournament');
+	}
+}
+export class TournamentMinPlayerNotReachError extends Error {
+	statusCode = 400;
+
+	constructor() {
+		super('Minimum of players for this tournament not reach');
+	}
+}
+export class TournamentIsOverError extends Error {
+	statusCode = 400;
+
+	constructor() {
+		super('Tournament is over');
 	}
 }
