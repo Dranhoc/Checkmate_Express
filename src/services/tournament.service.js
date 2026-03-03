@@ -16,6 +16,7 @@ import { Op } from 'sequelize';
 import { CategoryNotFoundError } from '../custom-errors/category.error.js';
 import { canRegister } from '../utils/tournamentRegister.utils.js';
 import createMatches from '../utils/createMatches.utils.js';
+import { MatchInfoMissingError, MatchNotGoodRoundError } from '../custom-errors/match.error.js';
 
 const tournamentService = {
 	create: async (payload) => {
@@ -229,6 +230,7 @@ const tournamentService = {
 
 		if (!tournament) throw new TournamentIdNotFoundError();
 		if (tournament.status === 'finished') throw new TournamentIsOverError();
+		if (tournament.status !== 'pending' || tournament.current_round != 0) throw new TournamentAlreadyStartedError();
 
 		const countParticipants = await tournament.participant.length;
 		const endDate = dayjs(await tournament.end_inscription_date);
@@ -240,12 +242,25 @@ const tournamentService = {
 		tournament.current_round += 1;
 		tournament.save();
 		try {
-			createMatches.roundRobin(tournament);
+			await createMatches.roundRobin(tournament);
 		} catch (error) {
 			tournament.current_round -= 1;
 			tournament.save();
+			throw new Error(error);
 		}
 		return tournament;
+	},
+	updateMatch: async (matchId, data) => {
+		const match = await db.Match.findByPk(matchId);
+		console.log(data);
+		if (data.isNull == 'undefined' || !data.winner || !data.status) throw new MatchInfoMissingError();
+		const tournament = await db.Tournament.findByPk(match.tournamentId);
+		if (match.tournament_round != tournament.current_round) throw new MatchNotGoodRoundError();
+		match.isNull = data.isNull;
+		match.winner = data.winner;
+		match.status = data.status;
+		match.save();
+		return match;
 	},
 };
 

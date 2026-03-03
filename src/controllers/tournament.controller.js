@@ -57,7 +57,13 @@ const tournamentController = {
 	start: async (req, res) => {
 		const { tournamentId } = req.params;
 		const tournament = await tournamentService.start(tournamentId);
-		res.status(200).json({ tournament });
+		const tournamentDTO = new TournamentListingDTO(tournament);
+		res.status(200).json({ tournamentDTO });
+	},
+	updateMatch: async (req, res) => {
+		const { matchId } = req.params;
+		const match = await tournamentService.updateMatch(matchId, req.data);
+		res.status(200).json({ match });
 	},
 };
 

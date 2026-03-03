@@ -12,22 +12,23 @@ export class TournamentListingDTO {
 		this.end_inscription_date = tournament.end_inscription_date;
 		this.status = tournament.status;
 
-		this.category = tournament.category.map((cat) => ({
+		this.category = tournament.category?.map((cat) => ({
 			name: cat.name,
 			age_min: cat.age_min,
 			age_max: cat.age_max,
 		}));
-		!this.category.length ? (this.category = 'No category') : '';
+		!this.category?.length ? (this.category = 'No category') : null;
 
 		this.participantsCount = tournament.participant.length;
-		this.participant = tournament.participant.map((user) => ({
+
+		this.participant = tournament.participant?.map((user) => ({
 			id: user.id,
 			pseudo: user.pseudo,
 			elo: user.elo,
 			gender: user.gender,
 			birthDate: user.birthDate,
 		}));
-		!this.participant.length ? (this.participant = 'No participant') : '';
+		!this.participant?.length ? (this.participant = 'No participant') : null;
 
 		this.currentMatches =
 			tournament.currentMatches && tournament.currentMatches.length > 0 ?

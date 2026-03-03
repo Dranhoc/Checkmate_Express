@@ -6,7 +6,6 @@ import { categoryData } from './category.seed.js';
 import { userData } from './user.seed.js';
 import { tournamentCategoriesData } from './tournamentCategories.seed.js';
 import { Op } from 'sequelize';
-import { tournamentsUsersData } from './participants.seed.js';
 
 async function runSeed() {
 	try {
@@ -38,7 +37,7 @@ async function runSeed() {
 		console.log(`   --🏴‍☠️ ${error} 🏴‍☠️--`);
 	} finally {
 		await db.sequelize.close();
-		process.exit();
+		// process.exit();
 	}
 }
 

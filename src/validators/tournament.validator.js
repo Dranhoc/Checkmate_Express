@@ -31,3 +31,9 @@ export const getAllTournamentQueryValidator = z.object({
 	offset: z.coerce.number().min(0).default(0),
 	limit: z.coerce.number().min(1).max(100).default(10),
 });
+
+export const updateMatchValidator = z.object({
+	isNull: z.stringbool().catch(false),
+	winner: z.string().catch(null),
+	status: z.enum(['pending', 'inProgress', 'finished']).catch('finished'),
+});

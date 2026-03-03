@@ -10,7 +10,7 @@ configureClog({
 	emoji: '🔥',
 });
 import 'dotenv/config';
-
+// import './database/seeds/index.js';
 import express from 'express';
 import morgan from 'morgan';
 
@@ -22,9 +22,6 @@ import router from './routers/index.js';
 
 const { APP_PORT } = process.env;
 await db.sequelize.authenticate();
-
-//TODO enlever quand on passe en PROD !!!
-await db.sequelize.sync({ alter: true });
 
 const app = express();
 

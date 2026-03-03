@@ -2,7 +2,7 @@ import { Router } from 'express';
 import tournamentController from '../controllers/tournament.controller.js';
 import { connected } from '../middlewares/auth.middleware.js';
 import { bodyValidator, queryValidator } from '../middlewares/validator.middleware.js';
-import { createTournamentValidator, getAllTournamentQueryValidator } from '../validators/tournament.validator.js';
+import { createTournamentValidator, getAllTournamentQueryValidator, updateMatchValidator } from '../validators/tournament.validator.js';
 
 const tournamentRouter = Router();
 
@@ -11,6 +11,7 @@ tournamentRouter.get('/', queryValidator(getAllTournamentQueryValidator), tourna
 tournamentRouter.post('/register/:tournamentId', connected(), tournamentController.register);
 tournamentRouter.delete('/unsubscribe/:tournamentId', connected(), tournamentController.unsubscribe);
 tournamentRouter.post('/start/:tournamentId', connected('admin'), tournamentController.start);
+tournamentRouter.put('/match/:matchId', bodyValidator(updateMatchValidator), connected('admin'), tournamentController.updateMatch);
 tournamentRouter.get('/:id', connected(), tournamentController.getById);
 tournamentRouter.delete('/:id', connected('admin'), tournamentController.delete);
 
