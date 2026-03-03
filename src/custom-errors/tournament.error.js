@@ -110,3 +110,10 @@ export class TournamentIsOverError extends Error {
 		super('Tournament is over');
 	}
 }
+export class TournamentRoundNotFinishedError extends Error {
+	statusCode = 400;
+
+	constructor() {
+		super('All the matches of current tournament round are not yet finished');
+	}
+}

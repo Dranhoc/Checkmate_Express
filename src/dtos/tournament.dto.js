@@ -19,7 +19,7 @@ export class TournamentListingDTO {
 		}));
 		!this.category?.length ? (this.category = 'No category') : null;
 
-		this.participantsCount = tournament.participant.length;
+		this.participantsCount = tournament.participant?.length;
 
 		this.participant = tournament.participant?.map((user) => ({
 			id: user.id,

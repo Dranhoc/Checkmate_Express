@@ -9,6 +9,7 @@ import {
 	TournamentMinPlayerNotReachError,
 	TournamentNotExistError,
 	TournamentRegistrationNotClosed,
+	TournamentRoundNotFinishedError,
 	UserNotRegisteredError,
 } from '../custom-errors/tournament.error.js';
 import db from '../database/index.js';
@@ -262,13 +263,72 @@ const tournamentService = {
 		match.save();
 		return match;
 	},
+	nextRound: async (tournamentId) => {
+		const tournament = await db.Tournament.findOne({
+			where: {
+				id: tournamentId,
+			},
+			include: [
+				{
+					model: db.Match,
+					as: 'matches',
+				},
+			],
+		});
+		tournament.matches.forEach((match) => {
+			if (match.tournament_round === tournament.current_round) {
+				if (match.status !== 'finished') throw new TournamentRoundNotFinishedError();
+			}
+		});
+		tournament.current_round += 1;
+		tournament.save();
+		return tournament;
+	},
+	getScore: async (tournamentId) => {
+		const tournament = await db.Tournament.findOne({
+			where: {
+				id: tournamentId,
+			},
+			include: [
+				{
+					model: db.User,
+					as: 'participant',
+				},
+				{
+					model: db.Match,
+					as: 'matches',
+					where: { status: 'finished' },
+				},
+			],
+		});
+		const players = tournament.participant;
+		const leaderboard = [];
+		for (const player of players) {
+			player.scoreTable = {
+				pseudo: player.pseudo,
+				matches: 0,
+				victory: 0,
+				defeat: 0,
+				draw: 0,
+			};
+			for (const match of tournament.matches) {
+				if (player.id === match.winner) {
+					player.scoreTable.victory += 1;
+				}
+				if (player.id === match.black_userId || player.id === match.white_userId) {
+					if (match.isNull) {
+						player.scoreTable.draw += 1;
+					} else if (player.id !== match.winner) {
+						player.scoreTable.defeat += 1;
+					}
+				}
+			}
+			player.scoreTable.score = player.scoreTable.victory + player.scoreTable.draw / 2;
+			leaderboard.push(player.scoreTable);
+		}
+
+		return leaderboard.sort((a, b) => b.score - a.score);
+	},
 };
 
 export default tournamentService;
-
-// const matches = tournament.matches;
-// matches?.forEach((match) => {
-// 	if (match.status !== 'finished') throw new AllMatchesAreNotOverError();
-// });
-
-// await tournament.save();

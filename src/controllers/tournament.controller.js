@@ -65,6 +65,17 @@ const tournamentController = {
 		const match = await tournamentService.updateMatch(matchId, req.data);
 		res.status(200).json({ match });
 	},
+	nextRound: async (req, res) => {
+		const { tournamentId } = req.params;
+		const tournament = await tournamentService.nextRound(tournamentId);
+		const tournamentDTO = new TournamentListingDTO(tournament);
+		res.status(200).json({ tournamentDTO });
+	},
+	getScore: async (req, res) => {
+		const { tournamentId } = req.params;
+		const leaderboard = await tournamentService.getScore(tournamentId);
+		res.status(200).json(leaderboard);
+	},
 };
 
 export default tournamentController;

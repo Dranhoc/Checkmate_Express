@@ -12,6 +12,8 @@ tournamentRouter.post('/register/:tournamentId', connected(), tournamentControll
 tournamentRouter.delete('/unsubscribe/:tournamentId', connected(), tournamentController.unsubscribe);
 tournamentRouter.post('/start/:tournamentId', connected('admin'), tournamentController.start);
 tournamentRouter.put('/match/:matchId', bodyValidator(updateMatchValidator), connected('admin'), tournamentController.updateMatch);
+tournamentRouter.post('/next-round/:tournamentId', connected('admin'), tournamentController.nextRound);
+tournamentRouter.get('/score/:tournamentId', connected(), tournamentController.getScore);
 tournamentRouter.get('/:id', connected(), tournamentController.getById);
 tournamentRouter.delete('/:id', connected('admin'), tournamentController.delete);
 
