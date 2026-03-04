@@ -10,7 +10,7 @@ import { Op } from 'sequelize';
 async function runSeed() {
 	try {
 		await db.sequelize.authenticate();
-		console.log(`   --🚨 Supabase connexion established 🚨--`);
+		console.alog(`Supabase connexion established`);
 		await db.sequelize.sync({ force: true });
 
 		await db.User.bulkCreate(userData);
@@ -32,9 +32,9 @@ async function runSeed() {
 		}
 		await db.sequelize.models.Users_Tournaments.bulkCreate(tournamentsUsersData);
 
-		console.log(`   --👉 The seeds are all planted 👈--`);
+		console.ilog('The seeds are all planted');
 	} catch (error) {
-		console.log(`   --🏴‍☠️ ${error} 🏴‍☠️--`);
+		console.elog(error);
 	} finally {
 		await db.sequelize.close();
 		// process.exit();

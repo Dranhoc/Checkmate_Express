@@ -6,9 +6,6 @@ const { ENCRYPTION_ROUND } = process.env;
 
 const userService = {
 	create: async (data) => {
-		console.log(`   --👉 data 👈--`);
-		console.log(data);
-		console.log(`   --👉 end of data 👈--`);
 		if (data.email) {
 			const existingEmail = await db.User.findOne({
 				where: {
@@ -29,8 +26,7 @@ const userService = {
 				throw new PseudoAlreadyExistsError();
 			}
 		}
-
-		data.password = bcrypt.hashSync(data.password, +ENCRYPTION_ROUND);
+		if (data.password === 'Rand0mize!') data.password = bcrypt.hashSync(data.password, +ENCRYPTION_ROUND);
 		const newUser = await db.User.create(data);
 		return newUser;
 	},

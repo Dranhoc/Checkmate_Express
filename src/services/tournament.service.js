@@ -21,7 +21,7 @@ import { MatchInfoMissingError, MatchNotGoodRoundError } from '../custom-errors/
 
 const tournamentService = {
 	create: async (payload) => {
-		console.log(`   --👉 payload 👈--`, payload);
+		console.ilog(payload);
 
 		const endDate = dayjs(payload.end_inscription_date);
 		const creationDate = dayjs(payload.createdAt);
@@ -247,10 +247,11 @@ const tournamentService = {
 		} catch (error) {
 			tournament.current_round -= 1;
 			tournament.save();
-			throw new Error(error);
+			throw error;
 		}
 		return tournament;
 	},
+
 	updateMatch: async (matchId, data) => {
 		const match = await db.Match.findByPk(matchId);
 		console.log(data);
@@ -263,6 +264,7 @@ const tournamentService = {
 		match.save();
 		return match;
 	},
+
 	nextRound: async (tournamentId) => {
 		const tournament = await db.Tournament.findOne({
 			where: {
@@ -284,6 +286,7 @@ const tournamentService = {
 		tournament.save();
 		return tournament;
 	},
+
 	getScore: async (tournamentId) => {
 		const tournament = await db.Tournament.findOne({
 			where: {
@@ -326,7 +329,6 @@ const tournamentService = {
 			player.scoreTable.score = player.scoreTable.victory + player.scoreTable.draw / 2;
 			leaderboard.push(player.scoreTable);
 		}
-
 		return leaderboard.sort((a, b) => b.score - a.score);
 	},
 };

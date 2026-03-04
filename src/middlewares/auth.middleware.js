@@ -1,20 +1,15 @@
 import { decodeToken } from '../utils/jwt.utils.js';
 
-// Function d'auth (récup du token et le décodage)
 export const authentification = (req, res, next) => {
 	const bearerToken = req.headers['authorization'];
-
 	if (bearerToken) {
-		//extraction du token
 		const [bearer, token] = bearerToken.split(' ');
 		if (bearer.toLowerCase() !== 'bearer') {
 			res.status(403).send();
 			return;
 		}
-		//decodage
 		try {
 			const decoded = decodeToken(token);
-			//sauvegarde dans l'objet req
 			req.user = {
 				id: decoded.id,
 				isAdmin: decoded.isAdmin,

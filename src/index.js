@@ -10,7 +10,6 @@ configureClog({
 	emoji: '🔥',
 });
 import 'dotenv/config';
-// import './database/seeds/index.js';
 import express from 'express';
 import morgan from 'morgan';
 
