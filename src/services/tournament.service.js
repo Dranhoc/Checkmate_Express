@@ -241,12 +241,12 @@ const tournamentService = {
 		if (endDate >= today) throw new TournamentRegistrationNotClosed();
 		tournament.status = 'inProgress';
 		tournament.current_round += 1;
-		tournament.save();
+		await tournament.save();
 		try {
 			await createMatches.roundRobin(tournament);
 		} catch (error) {
 			tournament.current_round -= 1;
-			tournament.save();
+			await tournament.save();
 			throw error;
 		}
 		return tournament;
@@ -261,7 +261,7 @@ const tournamentService = {
 		match.isNull = data.isNull;
 		match.winner = data.winner;
 		match.status = data.status;
-		match.save();
+		await match.save();
 		return match;
 	},
 
@@ -283,7 +283,7 @@ const tournamentService = {
 			}
 		});
 		tournament.current_round += 1;
-		tournament.save();
+		await tournament.save();
 		return tournament;
 	},
 
