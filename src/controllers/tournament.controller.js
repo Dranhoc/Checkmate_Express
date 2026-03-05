@@ -4,7 +4,8 @@ import tournamentService from '../services/tournament.service.js';
 const tournamentController = {
 	create: async (req, res) => {
 		const tournament = await tournamentService.create(req.data);
-		res.status(201).json({ tournament });
+		const tournamentDTO = new TournamentListingDTO(tournament);
+		res.status(201).json({ tournamentDTO });
 	},
 
 	getAll: async (req, res) => {
@@ -19,20 +20,21 @@ const tournamentController = {
 		};
 		const tournaments = await tournamentService.getAll(filter, pagination, req.user);
 		const tournamentsDTO = tournaments.map((tournament) => new TournamentListingDTO(tournament));
-		res.status(200).json(tournamentsDTO);
+		res.status(200).json({ data: tournamentsDTO });
 	},
 
 	getById: async (req, res) => {
 		const { id } = req.params;
 		const tournament = await tournamentService.getById(id);
 		const tournamentDTO = new TournamentListingDTO(tournament);
-		res.status(200).json(tournamentDTO);
+		res.status(200).json({ data: tournamentDTO });
 	},
 
 	delete: async (req, res) => {
 		const { id } = req.params;
 		const tournament = await tournamentService.delete(id);
-		res.status(200).json({ tournament });
+		const tournamentDTO = new TournamentListingDTO(tournament);
+		res.status(200).json({ data: tournamentDTO });
 	},
 
 	register: async (req, res) => {
@@ -58,26 +60,26 @@ const tournamentController = {
 		const { tournamentId } = req.params;
 		const tournament = await tournamentService.start(tournamentId);
 		const tournamentDTO = new TournamentListingDTO(tournament);
-		res.status(200).json({ tournamentDTO });
+		res.status(200).json({ data: tournamentDTO });
 	},
 
 	updateMatch: async (req, res) => {
 		const { matchId } = req.params;
 		const match = await tournamentService.updateMatch(matchId, req.data);
-		res.status(200).json({ match });
+		res.status(200).json({ data: match });
 	},
 
 	nextRound: async (req, res) => {
 		const { tournamentId } = req.params;
 		const tournament = await tournamentService.nextRound(tournamentId);
 		const tournamentDTO = new TournamentListingDTO(tournament);
-		res.status(200).json({ tournamentDTO });
+		res.status(200).json({ data: tournamentDTO });
 	},
 
 	getScore: async (req, res) => {
 		const { tournamentId } = req.params;
 		const leaderboard = await tournamentService.getScore(tournamentId);
-		res.status(200).json(leaderboard);
+		res.status(200).json({ data: leaderboard });
 	},
 };
 

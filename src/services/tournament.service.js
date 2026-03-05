@@ -233,8 +233,8 @@ const tournamentService = {
 		if (tournament.status === 'finished') throw new TournamentIsOverError();
 		if (tournament.status !== 'pending' || tournament.current_round != 0) throw new TournamentAlreadyStartedError();
 
-		const countParticipants = await tournament.participant.length;
-		const endDate = dayjs(await tournament.end_inscription_date);
+		const countParticipants = tournament.participant.length;
+		const endDate = dayjs(tournament.end_inscription_date);
 		const today = dayjs();
 
 		if (tournament.min_player > countParticipants) throw new TournamentMinPlayerNotReachError();
