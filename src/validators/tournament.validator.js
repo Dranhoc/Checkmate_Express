@@ -11,7 +11,7 @@ export const createTournamentValidator = z.object({
 	current_round: z.number().optional(),
 	woman_only: z.boolean(),
 	status: z.enum(['inProgress', 'pending', 'finished']).catch('finished'),
-	end_inscription_date: z.iso.datetime(),
+	end_inscription_date: z.iso.datetime().optional(),
 	current_round: z.number().min(0),
 	categories: z.array(z.string()).optional().default([]),
 });

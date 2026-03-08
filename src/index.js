@@ -1,4 +1,14 @@
 import { configureSeparator, configureClog, ansiBackground } from 'console-separator';
+import 'dotenv/config';
+import express from 'express';
+import morgan from 'morgan';
+
+import { errorHandler } from './middlewares/error.middleware.js';
+import { authentification } from './middlewares/auth.middleware.js';
+
+import db from './database/index.js';
+import router from './routers/index.js';
+
 configureSeparator({
 	char: '-',
 	color: 'green',
@@ -9,15 +19,6 @@ configureClog({
 	background: ansiBackground(22),
 	emoji: '🔥',
 });
-import 'dotenv/config';
-import express from 'express';
-import morgan from 'morgan';
-
-import { errorHandler } from './middlewares/error.middleware.js';
-import { authentification } from './middlewares/auth.middleware.js';
-
-import db from './database/index.js';
-import router from './routers/index.js';
 
 const { APP_PORT } = process.env;
 await db.sequelize.authenticate();

@@ -4,7 +4,16 @@ import { connected } from '../middlewares/auth.middleware.js';
 
 const userRouter = Router();
 
-// http://localhost:8080/user
+/**
+ * @swagger
+ * /user/:
+ *   post:
+ *     summary: Get all users
+ *     tags: [User]
+ *     responses:
+ *       200:
+ *         description: Success
+ */
 userRouter.get('/', connected(true), userController.getAll);
 
 export default userRouter;
