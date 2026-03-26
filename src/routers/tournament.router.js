@@ -28,23 +28,32 @@ const tournamentRouter = Router();
  *               min_player:
  *                 type: integer
  *                 example: 2
+ *                 description: min 2 max 32
  *               max_player:
  *                 type: integer
  *                 example: 32
+ *                 description: min 2 max 32
  *               min_elo:
  *                 type: integer
  *                 example: 100
+ *                 description: min 0 max 3000
  *               max_elo:
  *                 type: integer
  *                 example: 3000
+ *                 description: min 0 max 3000
  *               woman_only:
  *                 type: boolean
  *                 example: false
- *               end_inscription_date:
- *                 type: string
- *                 format: date
- *                 example: 2027-02-18
- *                 description: By default Now + days(max_player)
+ *               category:
+ *                 type: array
+ *                 example: ["Junior", "Veteran"]
+ *                 items:
+ *                  type: string
+ *                  enum:
+ *                    - Junior
+ *                    - Veteran
+ *                    - Senior
+ *                    - AllAges
  *     responses:
  *       200:
  *         description: Success
@@ -56,6 +65,90 @@ tournamentRouter.post('/', connected(true), bodyValidator(createTournamentValida
  *   get:
  *     summary: Everybody can get all tournaments
  *     tags: [Tournament]
+ *     parameters:
+ *       - in: query
+ *         name: name
+ *         schema:
+ *           type: string
+ *         description: Filter by tournament name (partial match)
+ *         example: Gold
+ *       - in: query
+ *         name: status
+ *         schema:
+ *           type: string
+ *           enum: [pending, ongoing, finished]
+ *         description: Filter by status (default excludes finished)
+ *         example: pending
+ *       - in: query
+ *         name: fromElo
+ *         schema:
+ *           type: integer
+ *         description: Filter tournaments where min_elo >= fromElo (use with toElo)
+ *         example: 100
+ *       - in: query
+ *         name: toElo
+ *         schema:
+ *           type: integer
+ *         description: Filter tournaments where max_elo <= toElo (use with fromElo)
+ *         example: 2000
+ *       - in: query
+ *         name: elo
+ *         schema:
+ *           type: integer
+ *         description: Filter tournaments accessible for a specific elo rating
+ *         example: 1200
+ *       - in: query
+ *         name: fromDate
+ *         schema:
+ *           type: string
+ *           format: date
+ *         description: Filter by inscription end date range start (use with toDate)
+ *         example: 2024-01-01
+ *       - in: query
+ *         name: toDate
+ *         schema:
+ *           type: string
+ *           format: date
+ *         description: Filter by inscription end date range end (use with fromDate)
+ *         example: 2024-12-31
+ *       - in: query
+ *         name: category
+ *         schema:
+ *           type: string
+ *           enum: [Junior, Veteran, Senior, AllAges]
+ *         description: Filter by category
+ *         example: Senior
+ *       - in: query
+ *         name: canRegister
+ *         schema:
+ *           type: boolean
+ *         description: Filter tournaments the authenticated user can register to
+ *         example: true
+ *       - in: query
+ *         name: isRegistered
+ *         schema:
+ *           type: boolean
+ *         description: Filter tournaments the authenticated user is already registered to
+ *         example: false
+ *       - in: query
+ *         name: offset
+ *         schema:
+ *           type: integer
+ *         description: Pagination offset
+ *         example: 0
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *         description: Pagination limit
+ *         example: 10
+ *       - in: query
+ *         name: orders[date]
+ *         schema:
+ *           type: string
+ *           enum: [ASC, DESC]
+ *         description: Sort by date
+ *         example: DESC
  *     responses:
  *       200:
  *         description: Success

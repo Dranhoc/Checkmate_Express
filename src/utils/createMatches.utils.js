@@ -38,32 +38,3 @@ async function newMatch(tournamentId, playerWhiteId, playerBlackId, current_roun
 }
 
 export default createMatches;
-
-// const createMatches = {
-// 	roundRobin: async (tournament) => {
-// 		let participants = tournament.participant.map((participant) => {
-// 			return participant.id;
-// 		});
-// 		if (participants.length % 2 != 0) {
-// 			participants.push(null);
-// 		}
-// 		const n = participants.length;
-
-// 		for (let i = 0; i < n - 1; i++) {
-// 			if (i != 0) {
-// 				let lastParticipant = participants.pop();
-// 				participants.splice(1, 0, lastParticipant);
-// 			}
-// 			for (let j = 0; j < n / 2; j++) {
-// 				if (participants[j] && participants[n - j - 1]) newMatch(tournament.id, participants[j], participants[n - j - 1], i + 1);
-// 			}
-// 		}
-// 		for (let i = 0; i < n - 1; i++) {
-// 			let lastParticipant = participants.pop();
-// 			participants.splice(1, 0, lastParticipant);
-// 			for (let j = 0; j < n / 2; j++) {
-// 				if (participants[j] && participants[n - j - 1]) newMatch(tournament.id, participants[n - j - 1], participants[j], i + 1);
-// 			}
-// 		}
-// 	},
-// };
