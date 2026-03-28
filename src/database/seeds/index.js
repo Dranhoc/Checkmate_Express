@@ -18,19 +18,25 @@ async function runSeed() {
 		await db.Tournament.bulkCreate(tournamentData);
 		await db.sequelize.models.Tournament_Categories.bulkCreate(tournamentCategoriesData);
 
-		const allUsers = await db.User.findAll({
+		const allUsersNoCheckMate = await db.User.findAll({
 			where: {
 				pseudo: {
 					[Op.ne]: 'MisterCheckMate',
 				},
 			},
 		});
+		const allUsers = await db.User.findAll({});
 
 		const tournamentsUsersData = [];
-		for (const e of allUsers) {
+		for (const e of allUsersNoCheckMate) {
 			tournamentsUsersData.push({ userId: e.id, tournamentId: 7 });
 		}
+		const tournamentsAllUsersData = [];
+		for (const e of allUsers) {
+			tournamentsAllUsersData.push({ userId: e.id, tournamentId: 2 });
+		}
 		await db.sequelize.models.Users_Tournaments.bulkCreate(tournamentsUsersData);
+		await db.sequelize.models.Users_Tournaments.bulkCreate(tournamentsAllUsersData);
 
 		console.ilog('The seeds are all planted');
 	} catch (error) {

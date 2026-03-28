@@ -26,7 +26,9 @@ const userService = {
 				throw new PseudoAlreadyExistsError();
 			}
 		}
-		if (data.password === 'Rand0mize!') data.password = bcrypt.hashSync(data.password, +ENCRYPTION_ROUND);
+		if (data.password) {
+			data.password = bcrypt.hashSync(data.password, +ENCRYPTION_ROUND);
+		}
 		const newUser = await db.User.create(data);
 		return newUser;
 	},
@@ -69,6 +71,9 @@ const userService = {
 	},
 	getAll: async () => {
 		return await db.User.findAll();
+	},
+	getById: async (userId) => {
+		return await db.User.findByPk(userId);
 	},
 };
 

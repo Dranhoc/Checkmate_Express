@@ -14,6 +14,13 @@ const userController = {
 		const usersDTO = users.map((user) => new UserDetailsDTO(user));
 		res.status(200).json({ data: usersDTO });
 	},
+	getById: async (req, res) => {
+		const { userId } = req.params;
+		const user = await userService.getById(userId);
+
+		const userDTO = new UserDetailsDTO(user);
+		res.status(200).json({ data: userDTO });
+	},
 };
 
 export default userController;

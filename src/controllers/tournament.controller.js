@@ -5,7 +5,7 @@ const tournamentController = {
 	create: async (req, res) => {
 		const tournament = await tournamentService.create(req.data);
 		const tournamentDTO = new TournamentListingDTO(tournament);
-		res.status(201).json({ tournamentDTO });
+		res.status(201).json({ data: tournamentDTO });
 	},
 
 	getAll: async (req, res) => {

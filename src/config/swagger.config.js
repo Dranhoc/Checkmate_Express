@@ -13,9 +13,7 @@ const options = {
 		},
 		servers: [{ url: `${APP_URL}:${APP_PORT}` }],
 	},
-	apis: [
-		'./src/routers/*.router.js', // scan all the .router.js
-	],
+	apis: ['./src/routers/*.router.js'],
 };
 
 export default swaggerJsdoc(options);

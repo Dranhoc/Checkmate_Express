@@ -15,6 +15,7 @@ export class UserDetailsDTO {
 	email;
 	isAdmin;
 	birthDate;
+	elo;
 	createdAt;
 	updatedAt;
 
@@ -25,5 +26,6 @@ export class UserDetailsDTO {
 		this.isAdmin = user.isAdmin;
 		this.createdAt = user.createdAt;
 		this.updatedAt = user.updatedAt;
+		this.elo = user.elo;
 	}
 }

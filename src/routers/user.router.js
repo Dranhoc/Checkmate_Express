@@ -15,5 +15,6 @@ const userRouter = Router();
  *         description: Success
  */
 userRouter.get('/', connected(true), userController.getAll);
+userRouter.get('/:userId', connected(), userController.getById);
 
 export default userRouter;
