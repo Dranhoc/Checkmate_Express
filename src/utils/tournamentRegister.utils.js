@@ -12,7 +12,7 @@ import {
 import db from '../database/index.js';
 import { UserNotExistError } from '../custom-errors/user.error.js';
 
-export const canRegister = async (tournamentId, userId) => {
+export const canRegister = async (tournamentId, userId, returnBoolean) => {
 	const user = await db.User.findByPk(userId);
 	if (!user) throw new UserNotExistError();
 
@@ -42,6 +42,8 @@ export const canRegister = async (tournamentId, userId) => {
 	if (tournament.woman_only && user.gender === 'male') throw new TournamentNotForMalesError();
 	if (!isAgeValid) throw new TournamentAgeNotCorrespondingError();
 	if (user.elo < tournament.min_elo || user.elo > tournament.max_elo) throw new TournamentEloError();
-
+	if (returnBoolean) {
+		return true;
+	}
 	return { user, tournament };
 };

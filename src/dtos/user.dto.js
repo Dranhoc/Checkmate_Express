@@ -12,6 +12,7 @@ export class UserListingDTO {
 
 export class UserDetailsDTO {
 	id;
+	pseudo;
 	email;
 	isAdmin;
 	birthDate;
@@ -21,6 +22,7 @@ export class UserDetailsDTO {
 
 	constructor(user) {
 		this.id = user.id;
+		this.pseudo = user.pseudo;
 		this.email = user.email;
 		this.birthDate = user.birthDate;
 		this.isAdmin = user.isAdmin;

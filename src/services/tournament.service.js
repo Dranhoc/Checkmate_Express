@@ -180,6 +180,11 @@ const tournamentService = {
 				tournamentId: tournament.id,
 				tournament_round: tournament.current_round,
 			},
+			include: [
+				{ model: db.User, as: 'whitePlaying', attributes: ['id', 'pseudo', 'elo'] },
+				{ model: db.User, as: 'blackPlaying', attributes: ['id', 'pseudo', 'elo'] },
+			],
+			order: [['id', 'DESC']],
 		});
 
 		tournament.currentMatches = currentMatches || [];
@@ -191,6 +196,10 @@ const tournamentService = {
 		const userTournament = await canRegister(tournamentId, userId);
 		await userTournament.tournament.addParticipant(userTournament.user);
 		return `${userTournament.tournament.name} successfully registered ${userTournament.user.pseudo}`;
+	},
+
+	canRegister: async (tournamentId, userId) => {
+		return await canRegister(tournamentId, userId, true);
 	},
 
 	unsubscribe: async (tournamentId, userId) => {
@@ -255,7 +264,7 @@ const tournamentService = {
 	updateMatch: async (matchId, data) => {
 		const match = await db.Match.findByPk(matchId);
 		console.log(data);
-		if (data.isNull == 'undefined' || !data.winner || !data.status) throw new MatchInfoMissingError();
+		if (data.isNull == 'undefined' || !data.status) throw new MatchInfoMissingError();
 		const tournament = await db.Tournament.findByPk(match.tournamentId);
 		if (match.tournament_round != tournament.current_round) throw new MatchNotGoodRoundError();
 		match.isNull = data.isNull;
@@ -330,6 +339,25 @@ const tournamentService = {
 			leaderboard.push(player.scoreTable);
 		}
 		return leaderboard.sort((a, b) => b.score - a.score);
+	},
+	getMatches: async (tournamentId, round) => {
+		const matches = await db.Match.findAll({
+			where: {
+				tournamentId: tournamentId,
+				tournament_round: round,
+			},
+			include: [
+				{
+					model: db.User,
+					as: 'whitePlaying',
+				},
+				{
+					model: db.User,
+					as: 'blackPlaying',
+				},
+			],
+		});
+		return matches;
 	},
 };
 

@@ -190,6 +190,8 @@ tournamentRouter.post('/register/:tournamentId', connected(), tournamentControll
  *         description: Success
  */
 tournamentRouter.delete('/unsubscribe/:tournamentId', connected(), tournamentController.unsubscribe);
+//TODO Doc !
+tournamentRouter.get('/can-register/:tournamentId/user/:userId', connected(), tournamentController.canRegister);
 /**
  * @swagger
  * /tournament/start/{tournamentId}:
@@ -244,6 +246,8 @@ tournamentRouter.put('/match/:matchId', bodyValidator(updateMatchValidator), con
  *         description: Success
  */
 tournamentRouter.post('/next-round/:tournamentId', connected(true), tournamentController.nextRound);
+//TODO Doc !
+tournamentRouter.get('/score/matches/:tournamentId/:round', connected(), tournamentController.getMatches);
 /**
  * @swagger
  * /tournament/score/{tournamentId}:

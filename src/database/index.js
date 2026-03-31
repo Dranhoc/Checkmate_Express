@@ -64,6 +64,16 @@ User.hasMany(Match, {
 	},
 });
 
+Match.belongsTo(User, {
+	as: 'whitePlaying',
+	foreignKey: 'white_userId',
+});
+
+Match.belongsTo(User, {
+	as: 'blackPlaying',
+	foreignKey: 'black_userId',
+});
+
 export default {
 	User,
 	Category,

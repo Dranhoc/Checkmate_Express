@@ -1,3 +1,4 @@
+import { MatchDTO } from '../dtos/match.dto.js';
 import { TournamentListingDTO } from '../dtos/tournament.dto.js';
 import tournamentService from '../services/tournament.service.js';
 
@@ -28,6 +29,11 @@ const tournamentController = {
 		const tournament = await tournamentService.getById(id);
 		const tournamentDTO = new TournamentListingDTO(tournament);
 		res.status(200).json({ data: tournamentDTO });
+	},
+	canRegister: async (req, res) => {
+		const { tournamentId, userId } = req.params;
+		const response = await tournamentService.canRegister(tournamentId, userId);
+		res.status(200).json(response);
 	},
 
 	delete: async (req, res) => {
@@ -80,6 +86,12 @@ const tournamentController = {
 		const { tournamentId } = req.params;
 		const leaderboard = await tournamentService.getScore(tournamentId);
 		res.status(200).json({ data: leaderboard });
+	},
+	getMatches: async (req, res) => {
+		const { tournamentId, round } = req.params;
+		const matches = await tournamentService.getMatches(tournamentId, round);
+		const matchDTO = matches.map((match) => new MatchDTO(match));
+		res.status(200).json({ data: matchDTO });
 	},
 };
 

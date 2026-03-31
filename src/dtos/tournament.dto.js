@@ -28,7 +28,7 @@ export class TournamentListingDTO {
 			gender: user.gender,
 			birthDate: user.birthDate,
 		}));
-		!this.participant?.length ? (this.participant = 'No participant') : null;
+		!this.participant?.length ? (this.participant = []) : null;
 
 		this.currentMatches =
 			tournament.currentMatches && tournament.currentMatches.length > 0 ?
@@ -40,9 +40,11 @@ export class TournamentListingDTO {
 					status: match.status,
 					white_userId: match.white_userId,
 					black_userId: match.black_userId,
+					whitePlaying: match.whitePlaying ? { id: match.whitePlaying.id, pseudo: match.whitePlaying.pseudo, elo: match.whitePlaying.elo } : null,
+					blackPlaying: match.blackPlaying ? { id: match.blackPlaying.id, pseudo: match.blackPlaying.pseudo, elo: match.blackPlaying.elo } : null,
 					createdAt: match.createdAt,
 					updatedAt: match.updatedAt,
 				}))
-			:	'No match';
+			:	[];
 	}
 }
