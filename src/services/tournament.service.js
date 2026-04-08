@@ -4,6 +4,7 @@ import {
 	MinELOOfPlayersError,
 	MinNumberOfPlayersError,
 	TournamentAlreadyStartedError,
+	TournamentEndError,
 	TournamentIdNotFoundError,
 	TournamentIsOverError,
 	TournamentMinPlayerNotReachError,
@@ -13,7 +14,7 @@ import {
 	UserNotRegisteredError,
 } from '../custom-errors/tournament.error.js';
 import db from '../database/index.js';
-import { Op } from 'sequelize';
+import { Op, QueryTypes } from 'sequelize';
 import { CategoryNotFoundError } from '../custom-errors/category.error.js';
 import { canRegister } from '../utils/tournamentRegister.utils.js';
 import createMatches from '../utils/createMatches.utils.js';
@@ -69,6 +70,8 @@ const tournamentService = {
 	getAll: async (filter, pagination, user) => {
 		const where = {};
 		const categoryWhere = {};
+		const allowedIds = [];
+		console.log(filter);
 
 		if (filter) {
 			if (filter.name) {
@@ -81,12 +84,21 @@ const tournamentService = {
 				where.status = { [Op.ne]: 'finished' };
 			}
 
-			if (filter.fromElo && filter.toElo && filter.fromElo <= filter.toElo) {
-				where.min_elo = { [Op.gte]: filter.fromElo };
-				where.max_elo = { [Op.lte]: filter.toElo };
-			} else if (filter.elo) {
-				where.min_elo = { [Op.lte]: filter.elo };
-				where.max_elo = { [Op.gte]: filter.elo };
+			if ((filter.elo && filter.fromElo) || filter.toElo) {
+				filter.fromElo = null;
+				filter.toElo = null;
+			}
+			if (!filter.elo) {
+				if (filter.fromElo && filter.toElo && filter.fromElo <= filter.toElo) {
+					where.min_elo = { [Op.gte]: filter.fromElo };
+					where.max_elo = { [Op.lte]: filter.toElo };
+				}
+			}
+			if (!filter.fromElo && !filter.toElo) {
+				if (filter.elo) {
+					where.min_elo = { [Op.lte]: filter.elo };
+					where.max_elo = { [Op.gte]: filter.elo };
+				}
 			}
 
 			if (filter.fromDate && filter.toDate) {
@@ -106,8 +118,6 @@ const tournamentService = {
 					},
 				});
 
-				const allowedIds = [];
-
 				for (const tournament of tournaments) {
 					try {
 						const canUserRegister = await canRegister(tournament.id, user.id);
@@ -118,10 +128,6 @@ const tournamentService = {
 						console.log(error);
 					}
 				}
-
-				where.id = {
-					[Op.in]: allowedIds,
-				};
 			}
 
 			if (filter.isRegistered) {
@@ -135,7 +141,23 @@ const tournamentService = {
 					],
 				});
 
-				where.id = { [Op.in]: tournaments.map((tournament) => tournament.id) };
+				allowedIds.push(...tournaments.map((tournament) => tournament.id));
+			}
+
+			if (filter.isComplete) {
+				const tournaments = await db.sequelize.query(
+					`SELECT t.id
+          FROM tournament t
+          WHERE (SELECT COUNT('userId')
+                FROM "Users_Tournaments" ut
+                WHERE ut."tournamentId" = t.id) >= t.max_player`,
+					{
+						type: QueryTypes.SELECT,
+					},
+				);
+				console.ilog(tournaments);
+				console.alog('ALLOOOOOO');
+				allowedIds.push(...tournaments.map((tournament) => tournament.id));
 			}
 		}
 
@@ -143,7 +165,11 @@ const tournamentService = {
 		if (pagination.orders?.date) {
 			order.push(['updatedAt', pagination.orders.date]);
 		}
-
+		if (allowedIds.length) {
+			where.id = {
+				[Op.in]: allowedIds,
+			};
+		}
 		const tournaments = await db.Tournament.findAll({
 			where,
 			order,
@@ -286,14 +312,31 @@ const tournamentService = {
 				},
 			],
 		});
-		tournament.matches.forEach((match) => {
+
+		const maxRound = await db.Match.max('tournament_round', {
+			where: {
+				tournamentId: tournamentId,
+			},
+		});
+		let tournamentNotEnd = 0;
+		tournament.matches.forEach(async (match) => {
 			if (match.tournament_round === tournament.current_round) {
 				if (match.status !== 'finished') throw new TournamentRoundNotFinishedError();
+				if (tournament.matches.current_round === maxRound) {
+					tournamentNotEnd += 1;
+				}
 			}
 		});
-		tournament.current_round += 1;
-		await tournament.save();
-		return tournament;
+
+		if (tournamentNotEnd) {
+			tournament.current_round += 1;
+			await tournament.save();
+			return tournament;
+		} else {
+			tournament.status = 'finished';
+			await tournament.save();
+			return tournament;
+		}
 	},
 
 	getScore: async (tournamentId) => {

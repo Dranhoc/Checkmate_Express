@@ -28,6 +28,7 @@ export const getAllTournamentQueryValidator = z.object({
 	orderByUpdateDate: z.enum(['asc', 'desc']).default('desc'),
 	canRegister: z.stringbool().optional().catch(null),
 	isRegistered: z.stringbool().optional().catch(null),
+	isComplete: z.stringbool().optional().catch(null),
 	offset: z.coerce.number().min(0).default(0),
 	limit: z.coerce.number().min(1).max(100).default(10),
 });

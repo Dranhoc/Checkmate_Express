@@ -10,8 +10,8 @@ const tournamentController = {
 	},
 
 	getAll: async (req, res) => {
-		const { name, status, category, elo, fromElo, toElo, fromDate, toDate, orderByUpdateDate, canRegister, isRegistered, offset, limit } = req.validatedQuery;
-		const filter = { name, status, category, elo, fromElo, toElo, fromDate, toDate, canRegister, isRegistered };
+		const { name, status, category, elo, fromElo, toElo, fromDate, toDate, orderByUpdateDate, canRegister, isRegistered, isComplete, offset, limit } = req.validatedQuery;
+		const filter = { name, status, category, elo, fromElo, toElo, fromDate, toDate, canRegister, isComplete, isRegistered };
 		const pagination = {
 			orders: {
 				date: orderByUpdateDate,
